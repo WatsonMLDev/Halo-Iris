@@ -1,0 +1,24 @@
+[project]
+name = "pebble-halo-poc"
+version = "0.1.0"
+description = "PebbleOS to Brilliant Labs Halo display & input bridge PoC"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "aiohttp>=3.10.0",
+    "brilliant-ble",
+    "brilliant-msg>=7.0.0",
+    "brilliant-sdk",
+    "halo-emulator",
+    "lz4>=4.4.3",
+    "numpy>=2.2.3",
+    "pillow>=11.1.0",
+    "playwright>=1.50.0",
+    "websockets>=14.0",
+]
+
+[tool.uv.sources]
+brilliant-ble = { path = "brilliant_sdk/python/packages/brilliant_ble", editable = true }
+brilliant-msg = { path = "brilliant_sdk/python/packages/brilliant_msg", editable = true }
+brilliant-sdk = { path = "brilliant_sdk/python/packages/brilliant_sdk", editable = true }
+halo-emulator = { path = "brilliant_sdk/python/packages/halo_emulator", editable = true }

@@ -30,23 +30,17 @@ if [ -f "pebble-qemu-wasm/index.html" ]; then
     sed -i "s/alsoPlatforms: \['emery', 'flint', 'gabbro', 'aplite', 'basalt', 'chalk', 'diorite'\]/alsoPlatforms: []/g" pebble-qemu-wasm/index.html
 fi
 
-echo "=== [2/4] Setting up Python virtual environment (.venv) ==="
-if [ ! -d ".venv" ]; then
-    python3 -m venv .venv
+echo "=== [2/4] Syncing uv project environment (.venv) ==="
+if ! command -v uv >/dev/null 2>&1; then
+    echo "Error: 'uv' is not installed. Install it from https://docs.astral.sh/uv/"
+    exit 1
 fi
-
-./.venv/bin/pip install --upgrade pip
-./.venv/bin/pip install \
-    -e ./brilliant_sdk/python/packages/brilliant_ble \
-    -e ./brilliant_sdk/python/packages/brilliant_msg \
-    -e ./brilliant_sdk/python/packages/brilliant_sdk \
-    -e ./brilliant_sdk/python/packages/halo_emulator \
-    -r requirements.txt
+uv sync
 
 echo "=== [3/4] Checking Playwright Chromium ==="
 if [ ! -x "/usr/bin/chromium" ]; then
     echo "  -> System /usr/bin/chromium not found; installing Playwright Chromium..."
-    ./.venv/bin/playwright install chromium
+    uv run playwright install chromium
 else
     echo "  -> Found system /usr/bin/chromium."
 fi
@@ -59,7 +53,7 @@ if [ "${1:-}" = "--with-touchyweather" ] || [ -d "TouchyWeather" ]; then
     if command -v npm >/dev/null 2>&1; then
         npm --prefix TouchyWeather install
     fi
-    ./.venv/bin/python - << 'PYEOF'
+    uv run python - << 'PYEOF'
 import pathlib, re, shutil, zipfile
 
 root = pathlib.Path("TouchyWeather")
@@ -92,5 +86,5 @@ fi
 
 echo ""
 echo "Setup complete! Quick test commands:"
-echo "  1. Fast encoder + Lua test:  ./.venv/bin/python test_encoder_pipeline.py"
-echo "  2. Live interactive bridge:  ./.venv/bin/python pebble_halo_bridge.py --board gabbro --pbw pebble-qemu-wasm/web/test-app.pbw --show-browser"
+echo "  1. Fast encoder + Lua test:  uv run python test_encoder_pipeline.py"
+echo "  2. Live interactive bridge:  uv run python pebble_halo_bridge.py --board gabbro --pbw pebble-qemu-wasm/web/test-app.pbw --show-browser"

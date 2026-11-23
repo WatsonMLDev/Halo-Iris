@@ -9,7 +9,7 @@ Run unmodified Pebble smartwatch apps (`.pbw` binaries from the Rebble App Store
 This repository purposefully **does not bundle** third-party repositories (`brilliant_sdk`, `pebble-qemu-wasm`, or sample apps like `TouchyWeather`). They are listed in [`.gitignore`](./.gitignore) and fetched automatically by [`setup.sh`](./setup.sh).
 
 ### Prerequisites
-* **Python 3.10+** (`python3-venv`)
+* **[`uv`](https://docs.astral.sh/uv/)** (Python package & environment manager — automatically manages Python 3.10+ and `.venv`)
 * **Git**
 * **Chromium** (system `/usr/bin/chromium`, or `setup.sh` will install Playwright's bundled Chromium automatically)
 * *(Optional)* **Node.js / npm** (only needed if you want to bundle `@rebble/clay` locally for `TouchyWeather`)
@@ -21,7 +21,7 @@ git clone <your-github-repo-url> pebble-halo-poc
 cd pebble-halo-poc
 
 # Clones brilliant_sdk + pebble-qemu-wasm, patches clang.wasm to -Oz,
-# creates .venv, and installs all Python packages:
+# and runs `uv sync` to build the environment:
 ./setup.sh
 
 # Or include TouchyWeather pre-packaged for in-browser C compilation:
@@ -40,19 +40,13 @@ cd pebble-halo-poc
    sed -i "s/'-Os'/'-Oz'/g" pebble-qemu-wasm/appbuild/appbuilder.js
    sed -i "s/alsoPlatforms: \['emery', 'flint', 'gabbro', 'aplite', 'basalt', 'chalk', 'diorite'\]/alsoPlatforms: []/g" pebble-qemu-wasm/index.html
    ```
-3. **Create Virtual Environment & Install Packages:**
+3. **Sync the `uv` Environment:**
    ```bash
-   python3 -m venv .venv
-   ./.venv/bin/pip install \
-     -e ./brilliant_sdk/python/packages/brilliant_ble \
-     -e ./brilliant_sdk/python/packages/brilliant_msg \
-     -e ./brilliant_sdk/python/packages/brilliant_sdk \
-     -e ./brilliant_sdk/python/packages/halo_emulator \
-     -r requirements.txt
+   uv sync
    ```
 4. **Verify Setup (~2 seconds):**
    ```bash
-   ./.venv/bin/python test_encoder_pipeline.py
+   uv run python test_encoder_pipeline.py
    ```
 
 ---
@@ -128,8 +122,8 @@ Rather than hunting for open-source C code and rewriting every app for Halo's Lu
 
 | Path | Description |
 |------|-------------|
-| [`setup.sh`](./setup.sh) | One-command setup script that clones external repos (`brilliant_sdk`, `pebble-qemu-wasm`, optional `TouchyWeather`), patches `clang.wasm` to `-Oz`, and creates `.venv`. |
-| [`requirements.txt`](./requirements.txt) | Host Python dependencies (`playwright`, `lz4`, `pillow`, `numpy`, `aiohttp`, `websockets`). |
+| [`setup.sh`](./setup.sh) | One-command setup script that clones external repos (`brilliant_sdk`, `pebble-qemu-wasm`, optional `TouchyWeather`), patches `clang.wasm` to `-Oz`, and runs `uv sync`. |
+| [`pyproject.toml`](./pyproject.toml) / [`uv.lock`](./uv.lock) | `uv` project definition wiring the local editable `brilliant_sdk` packages (`brilliant-ble`, `brilliant-msg`, `brilliant-sdk`, `halo-emulator`) and host dependencies (`playwright`, `lz4`, `pillow`, `numpy`, `aiohttp`, `websockets`). |
 | [`lua/pebble_halo_app.lua`](./lua/pebble_halo_app.lua) | The Lua app that runs on Halo (or `HaloEmulator`). Receives `0x22` dirty-rect/full-frame packets, handles multi-block LZ4 decompression, renders indexed bitmaps with custom RGB palettes, and forwards physical button clicks (`0x0B`) and IMU temple taps (`0x09`). |
 | [`pebble_frame_encoder.py`](./pebble_frame_encoder.py) | Converts Pebble frames (`260×260` `gabbro`, `180×180` `chalk`, etc.) to `256×256` circular Halo frames, computes minimal dirty bounding boxes, quantizes to 1/2/4-bit palettes, and packs the 10-byte `0x22` header + palette + LZ4 payload. |
 | [`pebble_halo_bridge.py`](./pebble_halo_bridge.py) | End-to-end orchestrator: starts the COOP/COEP HTTP server for `pebble-qemu-wasm`, boots `HaloEmulator` (with an interactive 2× Pygame circular HUD window), launches PebbleOS in Playwright Chromium, streams dirty rects to Halo, and routes Halo clicks/taps to Pebble buttons. |
@@ -180,19 +174,19 @@ Pebble watches have 4 physical buttons (`Back`, `Up`, `Select`, `Down`). Halo ha
 
 ## 6. How to Run the Demos
 
-All dependencies (`halo-emulator`, `brilliant-msg`, `brilliant-ble`, `playwright`, `pygame-ce`, `lz4`, `pillow`, `numpy`) are installed in `/home/watsonc/sudo_desktop/Halo/pebble-halo-poc/.venv`.
+All dependencies (`halo-emulator`, `brilliant-msg`, `brilliant-ble`, `playwright`, `pygame-ce`, `lz4`, `pillow`, `numpy`) are managed by `uv` in [`pyproject.toml`](./pyproject.toml).
 
 ### A. Quick Encoder & Lua Unit Test (No QEMU boot, runs in ~2 seconds)
 ```bash
 cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
-./.venv/bin/python test_encoder_pipeline.py
+uv run python test_encoder_pipeline.py
 ```
 
 ### B. Interactive Live Mode — Sideload Any `.pbw` Watchface or App
 Opens the 2× scaled circular **Halo Glasses HUD** Pygame window alongside the companion **PebbleOS Browser Window** (where you can paste any `apps.repebble.com` URL or drag-and-drop any `.pbw` file):
 ```bash
 cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
-./.venv/bin/python pebble_halo_bridge.py \
+uv run python pebble_halo_bridge.py \
   --board gabbro \
   --pbw pebble-qemu-wasm/web/test-app.pbw \
   --show-browser
@@ -202,7 +196,7 @@ cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
 Compiles `TouchyWeather` (`25+` C source files + `@rebble/clay` PebbleKit JS) in-browser using `clang.wasm` (`-Oz`) for `gabbro` (`260×260` circular), fetches live San Francisco weather from Open-Meteo, and streams it to the Halo HUD window:
 ```bash
 cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
-./.venv/bin/python pebble_halo_bridge.py \
+uv run python pebble_halo_bridge.py \
   --board gabbro \
   --port 8095 \
   --build-zip http://127.0.0.1:8095/TouchyWeather.zip \
@@ -213,7 +207,7 @@ cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
 Boots PebbleOS, compiles/installs the app, simulates Halo button clicks and temple taps, and saves `256×256` Halo framebuffer PNG snapshots:
 ```bash
 cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
-./.venv/bin/python pebble_halo_bridge.py \
+uv run python pebble_halo_bridge.py \
   --demo-headless \
   --board gabbro \
   --port 8096 \
