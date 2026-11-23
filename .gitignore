@@ -1,0 +1,23 @@
+# External repositories (cloned via setup.sh — not bundled in this repo)
+/brilliant_sdk/
+/pebble-qemu-wasm/
+/TouchyWeather/
+
+# Python virtual environment & bytecode
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Generated runtime captures / temporary screenshots in root
+/*.png
+/*.gif
+/*.mp4
+/*.zip
+
+# OS / Editor files
+.DS_Store
+.vscode/
+.idea/
