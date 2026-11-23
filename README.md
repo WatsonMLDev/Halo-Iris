@@ -1,4 +1,6 @@
-# PebbleOS × Brilliant Labs Halo — Architecture & Proof of Concept
+# Halo-Iris — PebbleOS × Brilliant Labs Halo Bridge
+
+> **Halo-Iris** *(Path 1 — Optical Projection / BLE Stream)* is part of a two-part exploration into running the Pebble smartwatch ecosystem on Brilliant Labs Halo smart glasses (alongside its upcoming native firmware sibling, **Halo-Atlas**).
 
 Run unmodified Pebble smartwatch apps (`.pbw` binaries from the Rebble App Store or compiled on the fly from GitHub C source repositories) and render them live onto **Brilliant Labs Halo** smart glasses (`256×256` circular OLEDoS display) with bidirectional input mapping (Halo physical button clicks + IMU temple taps → Pebble 4-button controls).
 
@@ -17,8 +19,8 @@ This repository purposefully **does not bundle** third-party repositories (`bril
 ### One-Command Bootstrap
 
 ```bash
-git clone <your-github-repo-url> pebble-halo-poc
-cd pebble-halo-poc
+git clone git@github.com:WatsonMLDev/Halo-Iris.git
+cd Halo-Iris
 
 # Clones brilliant_sdk + pebble-qemu-wasm, patches clang.wasm to -Oz,
 # and runs `uv sync` to build the environment:
@@ -118,7 +120,7 @@ Rather than hunting for open-source C code and rewriting every app for Halo's Lu
 
 ---
 
-## 3. Repository Layout (`/home/watsonc/sudo_desktop/Halo/pebble-halo-poc`)
+## 3. Repository Layout (`Halo-Iris`)
 
 | Path | Description |
 |------|-------------|
@@ -178,14 +180,12 @@ All dependencies (`halo-emulator`, `brilliant-msg`, `brilliant-ble`, `playwright
 
 ### A. Quick Encoder & Lua Unit Test (No QEMU boot, runs in ~2 seconds)
 ```bash
-cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
 uv run python test_encoder_pipeline.py
 ```
 
 ### B. Interactive Live Mode — Sideload Any `.pbw` Watchface or App
 Opens the 2× scaled circular **Halo Glasses HUD** Pygame window alongside the companion **PebbleOS Browser Window** (where you can paste any `apps.repebble.com` URL or drag-and-drop any `.pbw` file):
 ```bash
-cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
 uv run python pebble_halo_bridge.py \
   --board gabbro \
   --pbw pebble-qemu-wasm/web/test-app.pbw \
@@ -195,7 +195,6 @@ uv run python pebble_halo_bridge.py \
 ### C. Interactive Live Mode — Compile & Run `TouchyWeather` from C Source
 Compiles `TouchyWeather` (`25+` C source files + `@rebble/clay` PebbleKit JS) in-browser using `clang.wasm` (`-Oz`) for `gabbro` (`260×260` circular), fetches live San Francisco weather from Open-Meteo, and streams it to the Halo HUD window:
 ```bash
-cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
 uv run python pebble_halo_bridge.py \
   --board gabbro \
   --port 8095 \
@@ -206,7 +205,6 @@ uv run python pebble_halo_bridge.py \
 ### D. Automated Headless Capture Mode
 Boots PebbleOS, compiles/installs the app, simulates Halo button clicks and temple taps, and saves `256×256` Halo framebuffer PNG snapshots:
 ```bash
-cd /home/watsonc/sudo_desktop/Halo/pebble-halo-poc
 uv run python pebble_halo_bridge.py \
   --demo-headless \
   --board gabbro \

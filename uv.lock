@@ -684,6 +684,40 @@ requires-dist = [
 provides-extras = ["dev", "video"]
 
 [[package]]
+name = "halo-iris"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "brilliant-ble" },
+    { name = "brilliant-msg" },
+    { name = "brilliant-sdk" },
+    { name = "halo-emulator" },
+    { name = "lz4" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+    { name = "numpy", version = "2.5.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "pillow" },
+    { name = "playwright" },
+    { name = "websockets", version = "16.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "websockets", version = "17.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.10.0" },
+    { name = "brilliant-ble", editable = "brilliant_sdk/python/packages/brilliant_ble" },
+    { name = "brilliant-msg", editable = "brilliant_sdk/python/packages/brilliant_msg" },
+    { name = "brilliant-sdk", editable = "brilliant_sdk/python/packages/brilliant_sdk" },
+    { name = "halo-emulator", editable = "brilliant_sdk/python/packages/halo_emulator" },
+    { name = "lz4", specifier = ">=4.4.3" },
+    { name = "numpy", specifier = ">=2.2.3" },
+    { name = "pillow", specifier = ">=11.1.0" },
+    { name = "playwright", specifier = ">=1.50.0" },
+    { name = "websockets", specifier = ">=14.0" },
+]
+
+[[package]]
 name = "idna"
 version = "3.20"
 source = { registry = "https://pypi.org/simple" }
@@ -1380,40 +1414,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/99/3a/ab02c902cb380d0b950eccda4f0b67ac4f66ba490c98756d38adc4b3ccb5/numpy-2.5.5-cp315-cp315t-win32.whl", hash = "sha256:b5d08742de581c9eb61102768ccca125a2982913de399611b56981a07278de74", size = 6344124, upload-time = "2026-11-15T21:32:22.058Z" },
     { url = "https://files.pythonhosted.org/packages/fd/49/b04b1f12231e6fbcf26fd5e7949f629530e11c46a6fcd91923f61b017243/numpy-2.5.5-cp315-cp315t-win_amd64.whl", hash = "sha256:410eab02c6718cb42d06ccbb8604659f3522d2ce06ae70cacd5042092659f5af", size = 12898288, upload-time = "2026-11-15T21:32:23.871Z" },
     { url = "https://files.pythonhosted.org/packages/36/7b/935a5896b0bd441c6dd6da81f39bc5ebf8d5da891b7dcff768e1e1c088b5/numpy-2.5.5-cp315-cp315t-win_arm64.whl", hash = "sha256:b6ecbc1ff292c6799067d8064a4dd35cd25ba9d1a24aa41dd635d701691a49b5", size = 10891314, upload-time = "2026-11-15T21:32:26.357Z" },
-]
-
-[[package]]
-name = "pebble-halo-poc"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "brilliant-ble" },
-    { name = "brilliant-msg" },
-    { name = "brilliant-sdk" },
-    { name = "halo-emulator" },
-    { name = "lz4" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
-    { name = "numpy", version = "2.5.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-    { name = "pillow" },
-    { name = "playwright" },
-    { name = "websockets", version = "16.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "websockets", version = "17.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", specifier = ">=3.10.0" },
-    { name = "brilliant-ble", editable = "brilliant_sdk/python/packages/brilliant_ble" },
-    { name = "brilliant-msg", editable = "brilliant_sdk/python/packages/brilliant_msg" },
-    { name = "brilliant-sdk", editable = "brilliant_sdk/python/packages/brilliant_sdk" },
-    { name = "halo-emulator", editable = "brilliant_sdk/python/packages/halo_emulator" },
-    { name = "lz4", specifier = ">=4.4.3" },
-    { name = "numpy", specifier = ">=2.2.3" },
-    { name = "pillow", specifier = ">=11.1.0" },
-    { name = "playwright", specifier = ">=1.50.0" },
-    { name = "websockets", specifier = ">=14.0" },
 ]
 
 [[package]]

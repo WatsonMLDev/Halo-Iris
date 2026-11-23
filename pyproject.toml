@@ -1,7 +1,7 @@
 [project]
-name = "pebble-halo-poc"
+name = "halo-iris"
 version = "0.1.0"
-description = "PebbleOS to Brilliant Labs Halo display & input bridge PoC"
+description = "Halo-Iris: Stream unmodified PebbleOS apps & watchfaces to Brilliant Labs Halo smart glasses"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
